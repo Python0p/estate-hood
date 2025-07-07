@@ -1,1 +1,27 @@
 @import "tailwindcss";
+@keyframes gradient-move {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-move 8s ease-in-out infinite;
+}
+/* For animated underline effect */
+a.relative span:last-child {
+  transition: transform 0.3s;
+}
+a.relative:hover span:last-child {
+  transform: scaleX(1);
+}
+@keyframes gradient-move {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-move 8s ease-in-out infinite;
+}

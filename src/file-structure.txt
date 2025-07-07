@@ -1,0 +1,11 @@
+.
+├── App.css
+├── App.tsx
+├── assets
+│   └── react.svg
+├── file-structure.txt
+├── index.css
+├── main.tsx
+└── vite-env.d.ts
+
+2 directories, 7 files
