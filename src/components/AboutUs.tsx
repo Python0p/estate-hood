@@ -20,7 +20,10 @@ In addition to management services, we provide expert assistance in primary sale
 
 With a growing presence in India’s prime markets and select international destinations, we are committed to delivering strategic, reliable, and value-driven real estate solutions tailored to modern investor needs.
 
-Your property. Our priority.
+
+            <div className="mt-4 text-blue-200 text-xl font-semibold italic">
+                Your property. Our priority.
+            </div>
           </p>
         </div>
       </div>

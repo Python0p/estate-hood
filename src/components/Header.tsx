@@ -11,7 +11,7 @@ const socialLinks = [
   },
   {
     name: 'Instagram',
-    href: 'https://instagram.com/',
+    href: 'https://www.instagram.com/estatehood33?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==',
     icon: <FaInstagram size={18} className="text-white" />,
     bg: 'bg-gradient-to-tr from-pink-500 to-yellow-400 hover:from-pink-600 hover:to-yellow-500',
   },
@@ -23,7 +23,7 @@ const socialLinks = [
   },
   {
     name: 'WhatsApp',
-    href: 'https://wa.me/91XXXXXXXXXX',
+    href: 'https://wa.me/919899240417',
     icon: <FaWhatsapp size={18} className="text-white" />,
     bg: 'bg-green-500 hover:bg-green-600',
   },

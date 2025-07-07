@@ -1,15 +1,18 @@
 import React, { useState, useMemo, useEffect } from 'react';
 
 const allCities = [
-  "Agra", "Ahmedabad", "Bangalore", "Chennai", "Delhi", "Gurgaon", "Hyderabad", "Kolkata", "Lucknow", "Mumbai", "Noida", "Pune"
+  "Agra", "Ahmedabad", "Bangalore", "Chennai", "Delhi", "Gurgaon",
+  "Hyderabad", "Kolkata", "Lucknow", "Mumbai", "Noida", "Pune"
 ];
 
 const minBudgets = [
-  "₹ 5 Lakhs", "₹ 10 Lakhs", "₹ 15 Lakhs", "₹ 20 Lakhs", "₹ 25 Lakhs", "₹ 30 Lakhs", "₹ 40 Lakhs", "₹ 50 Lakhs", "₹ 60 Lakhs", "₹ 75 Lakhs", "₹ 90 Lakhs", "₹ 1 Crore", "₹ 1.25 Crore", "₹ 1.5 Crore", "₹ 1.75 Crore", "₹ 2 Crore", "₹ 3 Crore", "₹ 4 Crore", "₹ 5 Crore", "₹ 10 Crore", "₹ 20 Crore", "₹ 30 Crore", "₹ 50 Crore", "₹ 75 Crore"
+  "₹ 5 Lakhs", "₹ 10 Lakhs", "₹ 15 Lakhs", "₹ 20 Lakhs", "₹ 25 Lakhs",
+  "₹ 30 Lakhs", "₹ 40 Lakhs", "₹ 50 Lakhs", "₹ 60 Lakhs", "₹ 75 Lakhs",
+  "₹ 90 Lakhs", "₹ 1 Crore", "₹ 1.25 Crore", "₹ 1.5 Crore",
+  "₹ 1.75 Crore", "₹ 2 Crore", "₹ 3 Crore", "₹ 4 Crore", "₹ 5 Crore",
+  "₹ 10 Crore", "₹ 20 Crore", "₹ 30 Crore", "₹ 50 Crore", "₹ 75 Crore"
 ];
-const maxBudgets = [
-  "₹ 10 Lakhs", "₹ 15 Lakhs", "₹ 20 Lakhs", "₹ 25 Lakhs", "₹ 30 Lakhs", "₹ 40 Lakhs", "₹ 50 Lakhs", "₹ 60 Lakhs", "₹ 75 Lakhs", "₹ 90 Lakhs", "₹ 1 Crore", "₹ 1.25 Crore", "₹ 1.5 Crore", "₹ 1.75 Crore", "₹ 2 Crore", "₹ 3 Crore", "₹ 4 Crore", "₹ 5 Crore", "₹ 10 Crore", "₹ 20 Crore", "₹ 30 Crore", "₹ 50 Crore", "₹ 75 Crore"
-];
+const maxBudgets = [...minBudgets.slice(1)];
 
 const propertyTypes = {
   Residential: ["Plot", "Independent House", "Apartment", "Villa", "Builder Floor"],
@@ -56,8 +59,12 @@ const SearchBox: React.FC = () => {
   return (
     <form
       onSubmit={handleSearch}
-      className="w-full max-w-6xl mx-auto bg-white/30 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl px-4 py-6 flex flex-wrap gap-4 items-center justify-center"
-      style={{ boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.15)' }}
+      className="w-full max-w-6xl mx-auto border border-white/20 rounded-2xl px-4 py-6 flex flex-wrap gap-4 items-center justify-center"
+      style={{
+        background: 'transparent',
+        boxShadow: '0 8px 32px 0 rgba(255, 255, 255, 0.05)',
+        backdropFilter: 'blur(12px)',
+      }}
     >
       {/* City Autocomplete */}
       <div className="relative min-w-[170px] flex-1">
@@ -71,17 +78,17 @@ const SearchBox: React.FC = () => {
             setSelectedCity('');
             setShowCityDropdown(true);
           }}
-          className="w-full px-4 py-3 rounded-lg border border-white/30 bg-white/60 backdrop-blur focus:outline-none focus:ring-2 focus:ring-blue-500 transition text-gray-800 placeholder-gray-500"
+          className="w-full px-4 py-3 rounded-lg border border-white/30 bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 transition text-white placeholder-white/70"
         />
         {showCityDropdown && (
-          <ul className="absolute z-20 bg-white/95 border border-white/30 rounded-lg mt-1 max-h-48 overflow-auto w-full shadow-lg">
+          <ul className="absolute z-20 bg-[#172236cc] backdrop-blur border border-white/20 rounded-lg mt-1 max-h-48 overflow-auto w-full shadow-xl">
             {filteredCities.length === 0 && (
-              <li className="px-4 py-2 text-gray-400">No results</li>
+              <li className="px-4 py-2 text-white/70">No results</li>
             )}
             {filteredCities.slice(0, 10).map(city => (
               <li
                 key={city}
-                className="px-4 py-2 hover:bg-blue-50 cursor-pointer"
+                className="px-4 py-2 hover:bg-white/10 cursor-pointer text-white"
                 onClick={() => {
                   setSelectedCity(city);
                   setCityInput('');
@@ -96,29 +103,26 @@ const SearchBox: React.FC = () => {
       </div>
 
       {/* Budget Min/Max */}
-      <select
-        value={minBudget}
-        onChange={e => setMinBudget(e.target.value)}
-        className="min-w-[120px] px-4 py-3 rounded-lg border border-white/30 bg-white/60 backdrop-blur focus:outline-none focus:ring-2 focus:ring-blue-500 transition text-gray-800"
-      >
-        <option value="">Min Budget</option>
-        {minBudgets.map(b => (
-          <option key={b} value={b}>{b}</option>
-        ))}
-      </select>
-      <select
-        value={maxBudget}
-        onChange={e => setMaxBudget(e.target.value)}
-        className="min-w-[120px] px-4 py-3 rounded-lg border border-white/30 bg-white/60 backdrop-blur focus:outline-none focus:ring-2 focus:ring-blue-500 transition text-gray-800"
-      >
-        <option value="">Max Budget</option>
-        {filteredMaxBudgets.map(b => (
-          <option key={b} value={b}>{b}</option>
-        ))}
-      </select>
+      {[['Min Budget', minBudget, setMinBudget, minBudgets], ['Max Budget', maxBudget, setMaxBudget, filteredMaxBudgets]]
+        .map(([label, val, setter, list], i) => (
+          <select
+            key={i}
+            value={val as string}
+            onChange={(e) => setter(e.target.value)}
+            className="min-w-[120px] px-4 py-3 rounded-lg border border-white/30 bg-white/10 text-white backdrop-blur focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+          >
+            <option value="" style={{ backgroundColor: '#172236cc', color: 'white' }}>{label}</option>
+            {(list as string[]).map(b => (
+              <option key={b} value={b} style={{ backgroundColor: '#172236cc', color: 'white' }}>
+                {b}
+              </option>
+            ))}
+          </select>
+        ))
+      }
 
       {/* Property Type Tabs */}
-      <div className="flex gap-2 bg-blue-100/40 rounded-lg p-1 backdrop-blur">
+      <div className="flex gap-2 bg-white/10 rounded-lg p-1 backdrop-blur">
         {(['Residential', 'Commercial'] as const).map(cat => (
           <button
             key={cat}
@@ -127,45 +131,50 @@ const SearchBox: React.FC = () => {
             className={`px-4 py-2 rounded-lg font-semibold transition ${
               propertyCategory === cat
                 ? 'bg-blue-600 text-white shadow'
-                : 'bg-transparent text-blue-700 hover:bg-blue-100'
+                : 'bg-transparent text-white/80 hover:bg-white/10'
             }`}
           >
             {cat}
           </button>
         ))}
       </div>
+
       {/* Property Sub-Type */}
       <select
         value={propertyType}
         onChange={e => setPropertyType(e.target.value)}
-        className="min-w-[150px] px-4 py-3 rounded-lg border border-white/30 bg-white/60 backdrop-blur focus:outline-none focus:ring-2 focus:ring-blue-500 transition text-gray-800"
+        className="min-w-[150px] px-4 py-3 rounded-lg border border-white/30 bg-white/10 text-white backdrop-blur focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
       >
         {propertyTypes[propertyCategory].map(type => (
-          <option key={type} value={type}>{type}</option>
+          <option key={type} value={type} style={{ backgroundColor: '#172236cc', color: 'white' }}>
+            {type}
+          </option>
         ))}
       </select>
 
-      {/* Professional Status */}
+      {/* Status */}
       <select
         value={status}
         onChange={e => setStatus(e.target.value)}
-        className="min-w-[160px] px-4 py-3 rounded-lg border border-white/30 bg-white/60 backdrop-blur focus:outline-none focus:ring-2 focus:ring-blue-500 transition text-gray-800"
+        className="min-w-[160px] px-4 py-3 rounded-lg border border-white/30 bg-white/10 text-white backdrop-blur focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
       >
         {professionalStatus.map(status => (
-          <option key={status} value={status}>{status}</option>
+          <option key={status} value={status} style={{ backgroundColor: '#172236cc', color: 'white' }}>
+            {status}
+          </option>
         ))}
       </select>
 
-      {/* Keyword Search */}
+      {/* Keyword Input */}
       <input
         type="text"
         placeholder="Search by Project, Locality, or Builder"
         value={keyword}
         onChange={e => setKeyword(e.target.value)}
-        className="flex-1 min-w-[180px] px-4 py-3 rounded-lg border border-white/30 bg-white/60 backdrop-blur focus:outline-none focus:ring-2 focus:ring-blue-500 transition text-gray-800 placeholder-gray-500"
+        className="flex-1 min-w-[180px] px-4 py-3 rounded-lg border border-white/30 bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 transition text-white placeholder-white/70"
       />
 
-      {/* Search Button */}
+      {/* Submit Button */}
       <button
         type="submit"
         className="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow hover:bg-blue-700 transition"
