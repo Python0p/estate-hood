@@ -1,124 +1,179 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, type PanInfo, type useAnimation } from 'framer-motion';
+import LocationIcon from '../components/react-bits-style/LocationIcon';
+import CheckIcon from '../components/react-bits-style/CheckIcon';
 
 type Project = {
+  id: string;
   title: string;
-  subtitle: string;
-  description: string;
+  location: string;
+  highlights: string[];
   images: string[];
+  tags: string[];
 };
 
 const projects: Project[] = [
   {
-    title: 'BHUTANI ASTRATHUM ',
-    subtitle: 'Noida Extension, Milak Lachchhi, Greater Noida, Milak Lachhi, Uttar Pradesh 201009',
-    description:
-      'Bhutani Astrathum Gr. Noida West In collaboration with Yashoda Group',
-    images: [
-      'src/assets/PreLaunch/image.png',
-      'src/assets/PreLaunch/image0.png',
-      'src/assets/PreLaunch/image1.png',
-      'src/assets/PreLaunch/image2.png',
-      'src/assets/PreLaunch/image3.png',
+    id: '1',
+    title: 'BHUTANI ASTRATHUM',
+    location: 'Noida Extension',
+    highlights: [
+      'Collaboration with Yashoda Group',
+      'Premium residential towers',
+      'Strategic location'
     ],
+    images: Array(5).fill('').map((_, i) => `src/assets/PreLaunch/image${i}.png`),
+    tags: ['Residential', 'New Launch']
   },
   {
+    id: '2',
     title: 'Techno Park',
-    subtitle: 'Sector 127, Noida, Uttar Pradesh 201313',
-    description:
-      `Prelease office
-          Tower D 
-          -10990+ 899
-          -3 years lease lock-in
-          -Lease 8% on BSP for 3 years 
-          (100% lease starting after pay 50% BSP)
-          -Balance payment after 6 months`,
-
-    images: [
-      'src/assets/Technopark/image0.png',
-      'src/assets/Technopark/image1.png',
-      'src/assets/Technopark/image2.png',
-      'src/assets/Technopark/image3.png',
-      'src/assets/Technopark/image4.png',
-      'src/assets/Technopark/image5.png',
+    location: 'Sector 127, Noida',
+    highlights: [
+      'Prelease office space',
+      '10,990+ sq.ft available',
+      '3 years lease lock-in'
     ],
-  },
+    images: Array(6).fill('').map((_, i) => `src/assets/Technopark/image${i}.png`),
+    tags: ['Commercial', 'Lease']
+  }
 ];
 
-const TopProjectsShowcase: React.FC = () => {
-  const [activeImageIndex, setActiveImageIndex] = useState<number[]>([0, 0]);
+const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
+  const [isHovered, setIsHovered] = useState(false);
+  const [activeImage, setActiveImage] = useState(0);
+  const [autoRotate, setAutoRotate] = useState(true);
 
+  // Auto-rotate images
   useEffect(() => {
+    if (!autoRotate) return;
+    
     const interval = setInterval(() => {
-      setActiveImageIndex((prevIndices) =>
-        prevIndices.map((currentIndex, projectIdx) => {
-          const nextIndex = (currentIndex + 1) % projects[projectIdx].images.length;
-          return nextIndex;
-        })
-      );
-    }, 4000);
-    return () => clearInterval(interval);
-  }, []);
+      setActiveImage(prev => (prev + 1) % project.images.length);
+    }, 3000);
 
-  const handleImageChange = (projectIdx: number, imageIdx: number) => {
-    const newIndices = [...activeImageIndex];
-    newIndices[projectIdx] = imageIdx;
-    setActiveImageIndex(newIndices);
+    return () => clearInterval(interval);
+  }, [autoRotate, project.images.length]);
+
+  const handleImageChange = (index: number) => {
+    setActiveImage(index);
+    setAutoRotate(false);
+    setTimeout(() => setAutoRotate(true), 10000); // Resume auto-rotate after 10s
   };
 
   return (
-    <section className="py-12 px-2 bg-[#f7f9fb]">
-      <div className="max-w-5xl mx-auto text-center mb-8">
-        <h2 className="text-3xl font-bold text-slate-800">Top Client Projects</h2>
-        <p className="text-gray-600 mt-2 text-base">
-          A glimpse into our most premium residential and commercial listings
-        </p>
+    <motion.div 
+      className="relative rounded-xl overflow-hidden shadow-sm bg-white border border-gray-100"
+      whileHover={{ y: -5 }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      {/* Image with dull effect on hover */}
+      <div className="aspect-[4/3] relative">
+        <div className={`relative w-full h-full transition-all duration-300 ${isHovered ? 'brightness-75' : 'brightness-100'}`}>
+          <img 
+            src={project.images[activeImage]} 
+            alt={project.title}
+            className="w-full h-full object-cover transition-opacity duration-500"
+          />
+        </div>
+        
+        {/* Hover buttons */}
+        {isHovered && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="absolute inset-0 flex items-center justify-center"
+          >
+            <button className="px-4 py-2 bg-white text-gray-900 rounded-full font-medium shadow-md hover:bg-gray-100 transition-colors">
+              View Details
+            </button>
+          </motion.div>
+        )}
+
+        {/* Image indicators */}
+        <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1">
+          {project.images.map((_, idx) => (
+            <button 
+              key={idx}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleImageChange(idx);
+              }}
+              className={`w-2 h-2 rounded-full transition-all ${activeImage === idx ? 'bg-white w-4' : 'bg-white bg-opacity-50 hover:bg-opacity-70'}`}
+            />
+          ))}
+        </div>
+
+        {/* Tags */}
+        <div className="absolute top-3 left-3 flex gap-2">
+          {project.tags.map(tag => (
+            <span key={tag} className="px-2 py-1 bg-white bg-opacity-90 text-xs font-medium rounded shadow-sm">
+              {tag}
+            </span>
+          ))}
+        </div>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-        {projects.map((project, projectIdx) => (
-          <div
-            key={project.title}
-            className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 max-w-xs mx-auto"
-          >
-            {/* Image Section */}
-            <div className="relative h-[20rem] overflow-hidden">
-              <motion.img
-                key={project.images[activeImageIndex[projectIdx]]}
-                src={project.images[activeImageIndex[projectIdx]]}
-                alt={project.title}
-                initial={{ opacity: 0, scale: 1.05 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5 }}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-2">
-                {project.images.map((img, imgIdx) => (
-                  <button
-                    key={imgIdx}
-                    onClick={() => handleImageChange(projectIdx, imgIdx)}
-                    className={`w-2.5 h-2.5 rounded-full ${
-                      activeImageIndex[projectIdx] === imgIdx
-                        ? 'bg-blue-600'
-                        : 'bg-white border border-gray-400'
-                    }`}
-                  />
-                ))}
-              </div>
-            </div>
+      {/* Details that appear on hover */}
+      <motion.div
+        initial={{ height: 0 }}
+        animate={{ height: isHovered ? 'auto' : 0 }}
+        className="overflow-hidden"
+      >
+        <div className="p-4">
+          <h3 className="font-bold text-lg">{project.title}</h3>
+          <p className="text-sm text-gray-600 flex items-center mt-1">
+            <LocationIcon className="w-4 h-4 mr-1" />
+            {project.location}
+          </p>
+          
+          <ul className="mt-3 space-y-1">
+            {project.highlights.map((item, i) => (
+              <li key={i} className="text-sm flex items-start">
+                <CheckIcon className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0" />
+                {item}
+              </li>
+            ))}
+          </ul>
+          
+          <button className="mt-4 w-full py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors">
+            Contact Agent
+          </button>
+        </div>
+      </motion.div>
 
-            {/* Text Content */}
-            <div className="p-4 text-left">
-              <h3 className="text-lg font-semibold text-slate-800 mb-1">
-                {project.title}
-              </h3>
-              <h4 className="text-sm text-blue-600 font-medium mb-2">
-                {project.subtitle}
-              </h4>
-              <p className="text-gray-600 text-sm">{project.description}</p>
-            </div>
-          </div>
-        ))}
+      {/* Always visible minimal info */}
+      <div className="p-4">
+        <h3 className="font-bold">{project.title}</h3>
+        <p className="text-sm text-gray-500 truncate">{project.location}</p>
+      </div>
+    </motion.div>
+  );
+};
+
+// ... (LocationIcon and CheckIcon components remain the same)
+
+const TopProjectsShowcase: React.FC = () => {
+  return (
+    <section className="py-12 px-4 sm:px-6 bg-gray-50">
+      <div className="max-w-4xl mx-auto">
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-bold text-gray-900">Featured Projects</h2>
+          <p className="text-gray-500 mt-2">Premium properties handpicked for you</p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          {projects.map(project => (
+            <ProjectCard key={project.id} project={project} />
+          ))}
+        </div>
+
+        <div className="mt-8 text-center">
+          <button className="text-sm font-medium text-gray-700 hover:text-gray-900 underline">
+            Browse all projects →
+          </button>
+        </div>
       </div>
     </section>
   );
