@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion, type PanInfo, type useAnimation } from 'framer-motion';
+import { motion} from 'framer-motion';
 import LocationIcon from '../components/react-bits-style/LocationIcon';
 import CheckIcon from '../components/react-bits-style/CheckIcon';
 

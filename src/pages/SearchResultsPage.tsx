@@ -1,6 +1,6 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { FiHome, FiMapPin, FiDollarSign, FiArrowRight } from "react-icons/fi";
+import { FiMapPin, FiArrowRight } from "react-icons/fi";
 
 interface Property {
   _id: string;

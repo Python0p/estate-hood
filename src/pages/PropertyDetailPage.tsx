@@ -8,7 +8,6 @@ import {
   FiHome, 
   FiLayers, 
   FiCalendar, 
-  FiDollarSign, 
   FiMail, 
   FiPhone, 
   FiUser,
