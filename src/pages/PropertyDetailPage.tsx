@@ -44,6 +44,8 @@ type Property = {
 };
 
 const PropertyDetailPage: React.FC = () => {
+  const yourToken = localStorage.getItem('token');
+
   const navigate = useNavigate();
 
   const { id } = useParams();
@@ -51,21 +53,40 @@ const PropertyDetailPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  useEffect(() => {
-    if (id) {
-      fetch(`http://localhost:3000/api/v1/search/property/${id}`)
-        .then(res => res.json())
-        .then(data => {
-          const prop = Array.isArray(data) ? data[0] : data;
-          setProperty(prop);
-          setLoading(false);
-        })
-        .catch(err => {
-          console.error('Failed to fetch property:', err);
-          setLoading(false);
-        });
-    }
-  }, [id]);
+useEffect(() => {
+  if (id) {
+    const yourToken = localStorage.getItem('token') || '';
+
+    fetch(`http://localhost:3000/api/v1/search/property/${id}`, {
+      headers: {
+        'Authorization': `${yourToken}`,  // make sure 'Bearer' is present if your API expects it
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(res => {
+      if (res.status === 401) {
+        // Unauthorized - redirect to login
+        navigate('/login');
+        throw new Error('Unauthorized');
+      }
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+      return res.json();
+    })
+    .then(data => {
+      const prop = Array.isArray(data) ? data[0] : data;
+      setProperty(prop);
+      setLoading(false);
+    })
+    .catch(err => {
+      console.error('Failed to fetch property:', err);
+      setLoading(false);
+    });
+  }
+}, [id, navigate]);
+
+
 
   const formatPrice = (price?: number) =>
     price ? new Intl.NumberFormat('en-IN').format(price) : '-';

@@ -19,12 +19,11 @@ We manage both residential and commercial assets, offering end-to-end solutions 
 In addition to management services, we provide expert assistance in primary sales, resale transactions, and investment advisory across a diverse portfolio of real estate assets. Our team leverages in-depth market insights to identify high-return opportunities and facilitate smooth, transparent transactions for our clients.
 
 With a growing presence in India’s prime markets and select international destinations, we are committed to delivering strategic, reliable, and value-driven real estate solutions tailored to modern investor needs.
-
-
-            <div className="mt-4 text-blue-200 text-xl font-semibold italic">
-                Your property. Our priority.
-            </div>
+            
           </p>
+            <p className="mt-4 text-blue-200 text-xl font-semibold italic">
+                  Your property. Our priority.
+              </p>
         </div>
       </div>
     </section>

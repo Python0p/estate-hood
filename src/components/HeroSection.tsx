@@ -16,7 +16,7 @@ const HeroSection: React.FC = () => {
           className="absolute inset-0 w-full h-full object-cover z-0 brightness-[0.6] saturate-[1.2]"
         >
           <source
-            src="https://static.vecteezy.com/system/resources/previews/007/534/936/mp4/shekvetili-georgia-2020-aerial-front-view-of-paragraph-resort-spa-hotel-exterior-at-night-free-video.mp4"
+            src="src/assets/background.mp4"
             type="video/mp4"
           />
           Your browser does not support the video tag.
