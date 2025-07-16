@@ -22,7 +22,7 @@ const projects: Project[] = [
       'Premium residential towers',
       'Strategic location'
     ],
-    images: Array(5).fill('').map((_, i) => `src/assets/PreLaunch/image${i}.png`),
+    images: Array(5).fill('').map((_, i) => `/PreLaunch/image${i}.png`),
     tags: ['Residential', 'New Launch']
   },
   {
@@ -34,7 +34,7 @@ const projects: Project[] = [
       '10,990+ sq.ft available',
       '3 years lease lock-in'
     ],
-    images: Array(6).fill('').map((_, i) => `src/assets/Technopark/image${i}.png`),
+    images: Array(6).fill('').map((_, i) => `/Technopark/image${i}.png`),
     tags: ['Commercial', 'Lease']
   }
 ];

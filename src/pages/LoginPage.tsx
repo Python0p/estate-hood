@@ -179,7 +179,7 @@ const LoginPage: React.FC = () => {
         className="absolute inset-0 w-full h-full object-cover z-0 brightness-[0.5] saturate-[1.2]"
       >
         <source
-          src="src/assets/background.mp4"
+          src="/background.mp4"
           type="video/mp4"
         />
       </video>
