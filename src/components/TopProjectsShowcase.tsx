@@ -13,6 +13,7 @@ const PreLaunch_images =  [
 ]
 
 const Technopark_images = [
+  "https://res.cloudinary.com/dnfqbyhxr/image/upload/v1752705596/image_i1uqsa.png",
   "https://res.cloudinary.com/dnfqbyhxr/image/upload/v1752705323/image0_ryrucz.png",
   "https://res.cloudinary.com/dnfqbyhxr/image/upload/v1752705322/image3_c1bgpm.png",
   "https://res.cloudinary.com/dnfqbyhxr/image/upload/v1752705322/image2_ah2tgr.png",
@@ -52,7 +53,7 @@ const projects: Project[] = [
       '10,990+ sq.ft available',
       '3 years lease lock-in'
     ],
-    images: Array(6).fill('').map((_, i) => Technopark_images[i]),
+    images: Array(7).fill('').map((_, i) => Technopark_images[i]),
     tags: ['Commercial', 'Lease']
   }
 ];

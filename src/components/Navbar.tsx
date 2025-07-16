@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import logo from '../assets/logo.png';
 import { useNavigate } from 'react-router-dom';
 
 const Navbar: React.FC = () => {
@@ -38,7 +37,7 @@ const Navbar: React.FC = () => {
               >
                 <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-full overflow-hidden border-[5px] border-white shadow-2xl bg-white relative">
                   <img
-                    src={logo}
+                    src = "https://res.cloudinary.com/dnfqbyhxr/image/upload/v1752705701/logo_ifw3ty.jpg"
                     alt="Estate Hood Logo"
                     className="h-full w-full object-cover"
                   />
