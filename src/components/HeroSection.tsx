@@ -16,8 +16,8 @@ const HeroSection: React.FC = () => {
           className="absolute inset-0 w-full h-full object-cover z-0 brightness-[0.6] saturate-[1.2]"
         >
           <source
-            src="/background.mp4"
-            type="https://res.cloudinary.com/dnfqbyhxr/video/upload/v1752704263/shekvetili-georgia-2020-aerial-front-view-of-paragraph-resort-spa-hotel-exterior-at-night-free-video_1_mglffg.mp4"
+            src="https://res.cloudinary.com/dnfqbyhxr/video/upload/v1752704263/shekvetili-georgia-2020-aerial-front-view-of-paragraph-resort-spa-hotel-exterior-at-night-free-video_1_mglffg.mp4"
+            type="video/mp4"
           />
           Your browser does not support the video tag.
         </video>
