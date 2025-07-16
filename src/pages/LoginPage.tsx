@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-const BACKEND_API_URL = import.meta.env.REACT_APP_API_URL;
+const BACKEND_API_URL = import.meta.env.VITE_API_URL;
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
