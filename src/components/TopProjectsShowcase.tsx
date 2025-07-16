@@ -3,6 +3,24 @@ import { motion} from 'framer-motion';
 import LocationIcon from '../components/react-bits-style/LocationIcon';
 import CheckIcon from '../components/react-bits-style/CheckIcon';
 
+
+const PreLaunch_images =  [
+  "https://res.cloudinary.com/dnfqbyhxr/image/upload/v1752704851/image0_otfvry.png",
+  "https://res.cloudinary.com/dnfqbyhxr/image/upload/v1752704844/image1_eqoph2.png",
+  "https://res.cloudinary.com/dnfqbyhxr/image/upload/v1752704844/image4_vjlfbv.png",
+  "https://res.cloudinary.com/dnfqbyhxr/image/upload/v1752704844/image2_ag87ir.png",
+  "https://res.cloudinary.com/dnfqbyhxr/image/upload/v1752704844/image3_fboyiq.png",
+]
+
+const Technopark_images = [
+  "https://res.cloudinary.com/dnfqbyhxr/image/upload/v1752705323/image0_ryrucz.png",
+  "https://res.cloudinary.com/dnfqbyhxr/image/upload/v1752705322/image3_c1bgpm.png",
+  "https://res.cloudinary.com/dnfqbyhxr/image/upload/v1752705322/image2_ah2tgr.png",
+  "https://res.cloudinary.com/dnfqbyhxr/image/upload/v1752705322/image1_ynopvw.png",
+  "https://res.cloudinary.com/dnfqbyhxr/image/upload/v1752705321/image4_albf0i.png",
+  "https://res.cloudinary.com/dnfqbyhxr/image/upload/v1752705320/image5_bhnhp1.png",
+]
+
 type Project = {
   id: string;
   title: string;
@@ -22,7 +40,7 @@ const projects: Project[] = [
       'Premium residential towers',
       'Strategic location'
     ],
-    images: Array(5).fill('').map((_, i) => `/PreLaunch/image${i}.png`),
+    images: Array(5).fill('').map((_, i) => PreLaunch_images[i]),
     tags: ['Residential', 'New Launch']
   },
   {
@@ -34,7 +52,7 @@ const projects: Project[] = [
       '10,990+ sq.ft available',
       '3 years lease lock-in'
     ],
-    images: Array(6).fill('').map((_, i) => `/Technopark/image${i}.png`),
+    images: Array(6).fill('').map((_, i) => Technopark_images[i]),
     tags: ['Commercial', 'Lease']
   }
 ];
