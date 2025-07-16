@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+const BACKEND_API_URL = import.meta.env.REACT_APP_API_URL;
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ const LoginPage: React.FC = () => {
 
     if (token) {
       setIsWaiting(true);
-      fetch(`http://localhost:3000/api/v1/user/verify-login?token=${token}`)
+      fetch(`${BACKEND_API_URL}/api/v1/user/verify-login?token=${token}`)
         .then((res) => res.json())
         .then((data) => {
           if (data.token) {
@@ -47,7 +48,7 @@ const LoginPage: React.FC = () => {
     localStorage.setItem("loginSessionNonce", sessionNonce);
 
     try {
-      const res = await fetch("http://localhost:3000/api/v1/user/login", {
+      const res = await fetch(`${BACKEND_API_URL}/api/v1/user/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, sessionNonce }),
@@ -76,7 +77,7 @@ const LoginPage: React.FC = () => {
     localStorage.setItem("loginSessionNonce", sessionNonce);
     setResending(true);
     try {
-      const res = await fetch("http://localhost:3000/api/v1/user/login", {
+      const res = await fetch(`${BACKEND_API_URL}/api/v1/user/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, sessionNonce }),
@@ -106,7 +107,7 @@ const LoginPage: React.FC = () => {
     const poller = setInterval(async () => {
       try {
         const res = await fetch(
-          `http://localhost:3000/api/v1/user/verify-login?sessionNonce=${sessionNonce}`
+          `${BACKEND_API_URL}/api/v1/user/verify-login?sessionNonce=${sessionNonce}`
         );
         const data = await res.json();
 

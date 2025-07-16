@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+const BACKEND_API_URL = import.meta.env.REACT_APP_BACKEND_API_URL;
 
 const allCities = [
   "Agra", "Ahmedabad", "Bangalore", "Chennai", "Delhi", "Gurgaon",
@@ -66,7 +67,7 @@ const SearchBox: React.FC = () => {
       if (status) payload.status = status;
       if (keyword) payload.keyword = keyword;
 
-      const res = await fetch("http://localhost:3000/api/v1/search", {
+      const res = await fetch(`${BACKEND_API_URL}/api/v1/search`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)

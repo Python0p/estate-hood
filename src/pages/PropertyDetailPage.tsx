@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams , useNavigate } from 'react-router-dom';
+
+const BACKEND_API_URL = import.meta.env.REACT_APP_API_URL;
+
 import { 
   FiMapPin, 
   FiHome, 
@@ -44,8 +47,6 @@ type Property = {
 };
 
 const PropertyDetailPage: React.FC = () => {
-  const yourToken = localStorage.getItem('token');
-
   const navigate = useNavigate();
 
   const { id } = useParams();
@@ -57,7 +58,7 @@ useEffect(() => {
   if (id) {
     const yourToken = localStorage.getItem('token') || '';
 
-    fetch(`http://localhost:3000/api/v1/search/property/${id}`, {
+    fetch(`${BACKEND_API_URL}/api/v1/search/property/${id}`, {
       headers: {
         'Authorization': `${yourToken}`,  // make sure 'Bearer' is present if your API expects it
         'Content-Type': 'application/json'

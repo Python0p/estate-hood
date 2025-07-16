@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+const BACKEND_API_URL = import.meta.env.REACT_APP_API_URL;
 
 const SignupPage: React.FC = () => {
   const navigate = useNavigate();
@@ -32,7 +33,7 @@ const SignupPage: React.FC = () => {
     localStorage.setItem("phoneno", phoneno);
 
     try {
-      const res = await fetch("http://localhost:3000/api/v1/user/signup", {
+      const res = await fetch(`${BACKEND_API_URL}/api/v1/user/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email: emailVal, phoneno, sessionNonce }),
@@ -68,7 +69,7 @@ const SignupPage: React.FC = () => {
 
     setResending(true);
     try {
-      const res = await fetch("http://localhost:3000/api/v1/user/signup", {
+      const res = await fetch(`${BACKEND_API_URL}/api/v1/user/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, phoneno, sessionNonce }),
@@ -112,7 +113,7 @@ const SignupPage: React.FC = () => {
     const poller = setInterval(async () => {
       try {
         const res = await fetch(
-          `http://localhost:3000/api/v1/user/check-verification?sessionNonce=${sessionNonce}`
+          `${BACKEND_API_URL}/api/v1/user/check-verification?sessionNonce=${sessionNonce}`
         );
         const data = await res.json();
 
