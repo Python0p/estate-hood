@@ -1,222 +1,252 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { FiMail, FiAlertTriangle, FiLoader, FiArrowRight } from 'react-icons/fi';
+
 const BACKEND_API_URL = import.meta.env.VITE_API_URL;
 
-const LoginPage: React.FC = () => {
-  const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [countdown, setCountdown] = useState(300);
-  const [isWaiting, setIsWaiting] = useState(false);
-  const [timeExpired, setTimeExpired] = useState(false);
-  const [resending, setResending] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMsg, setErrorMsg] = useState("");
+// --- Helper Component for Countdown View ---
+const WaitingView: React.FC<{
+    email: string;
+    onResend: () => Promise<void>;
+    onTimeExpired: () => void;
+}> = ({ email, onResend, onTimeExpired }) => {
+    const [countdown, setCountdown] = useState(300);
+    const [isResending, setIsResending] = useState(false);
 
-  // Check if login token present in URL
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const token = params.get("token");
-
-    if (token) {
-      setIsWaiting(true);
-      fetch(`${BACKEND_API_URL}/api/v1/user/verify-login?token=${token}`)
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.token) {
-            localStorage.setItem("token", data.token);
-            navigate("/");
-          } else {
-            setErrorMsg(data.message || "Invalid or expired login link.");
-            setIsWaiting(false);
-          }
-        })
-        .catch(() => {
-          setErrorMsg("Something went wrong while verifying login.");
-          setIsWaiting(false);
-        });
-    }
-  }, [navigate]);
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (isSubmitting) return;
-
-    setIsSubmitting(true);
-    const sessionNonce = crypto.randomUUID();
-
-    localStorage.setItem("loginEmail", email);
-    localStorage.setItem("loginSessionNonce", sessionNonce);
-
-    try {
-      const res = await fetch(`${BACKEND_API_URL}/api/v1/user/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, sessionNonce }),
-      });
-
-      const data = await res.json();
-      if (res.ok) {
-        setCountdown(300);
-        setTimeExpired(false);
-        setIsWaiting(true);
-      } else {
-        setErrorMsg(data.message || "Login failed");
-      }
-    } catch {
-      setErrorMsg("Network error. Please try again.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleResend = async () => {
-    const email = localStorage.getItem("loginEmail");
-    const sessionNonce = crypto.randomUUID();
-    if (!email || !sessionNonce) return;
-
-    localStorage.setItem("loginSessionNonce", sessionNonce);
-    setResending(true);
-    try {
-      const res = await fetch(`${BACKEND_API_URL}/api/v1/user/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, sessionNonce }),
-      });
-
-      const data = await res.json();
-      if (res.ok) {
-        alert("Login link resent");
-        setCountdown(300);
-        setTimeExpired(false);
-        setIsWaiting(false);
-        setTimeout(() => setIsWaiting(true), 50);
-      } else {
-        alert(data.message || "Could not resend login link");
-      }
-    } catch {
-      alert("Something went wrong.");
-    } finally {
-      setResending(false);
-    }
-  };
-
-  useEffect(() => {
-    if (!isWaiting) return;
-
-    const sessionNonce = localStorage.getItem("loginSessionNonce");
-    const poller = setInterval(async () => {
-      try {
-        const res = await fetch(
-          `${BACKEND_API_URL}/api/v1/user/verify-login?sessionNonce=${sessionNonce}`
-        );
-        const data = await res.json();
-
-        if (data.token) {
-          localStorage.setItem("token", data.token);
-          clearInterval(poller);
-          navigate("/");
+    // FIX: Timer effect now depends on `countdown` to restart correctly.
+    useEffect(() => {
+        if (countdown <= 0) {
+            onTimeExpired(); // Notify parent that time is up
+            return; 
         }
-      } catch {}
-    }, 5000);
 
-    const timer = setInterval(() => {
-      setCountdown((prev) => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          clearInterval(poller);
-          setTimeExpired(true);
-          return 0;
+        const timerId = setInterval(() => {
+            setCountdown(prev => prev - 1);
+        }, 1000);
+
+        return () => clearInterval(timerId);
+    }, [countdown, onTimeExpired]);
+
+    const handleResendClick = async () => {
+        setIsResending(true);
+        try {
+            await onResend();
+            setCountdown(300); // This reset will trigger the useEffect above
+        } finally {
+            setIsResending(false);
         }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => {
-      clearInterval(poller);
-      clearInterval(timer);
     };
-  }, [isWaiting, navigate]);
 
-  if (isWaiting) {
+    const minutes = Math.floor(countdown / 60);
+    const seconds = String(countdown % 60).padStart(2, "0");
+    const timeExpired = countdown <= 0;
+
     return (
-      <div className="h-screen flex flex-col items-center justify-center text-center px-6 bg-gray-900 text-white">
-        <h2 className="text-3xl font-bold mb-4">Check your email</h2>
-        <p className="text-white/80 mb-6">
-          We've sent a login link to <strong>{email}</strong>.
-        </p>
-
-        <p className="text-lg font-semibold text-yellow-300 mb-2">
-          Time Remaining:{" "}
-          {Math.floor(countdown / 60)}:{String(countdown % 60).padStart(2, "0")}
-        </p>
-
-        {timeExpired && (
-          <div className="mt-6">
-            <p className="text-red-400 mb-2 font-semibold">
-              ⌛ Link expired. You can resend below.
+        <div className="flex flex-col items-center justify-center text-center">
+            <div className="mb-6 h-16 w-16 bg-green-500/10 border-2 border-green-500/30 text-green-400 rounded-full flex items-center justify-center">
+                <FiMail size={32} />
+            </div>
+            <h2 className="text-3xl font-bold mb-3 text-white">Check your email</h2>
+            <p className="text-white/70 mb-8 max-w-sm">
+                We've sent a secure login link to <strong className="text-white font-medium">{email}</strong>. Click the link to sign in.
             </p>
-            <button
-              onClick={handleResend}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
-              disabled={resending}
-            >
-              {resending ? "Resending..." : "Resend Login Link"}
-            </button>
-          </div>
-        )}
-      </div>
+
+            {!timeExpired ? (
+                <div className="text-center">
+                    <p className="text-sm text-white/60">The link will expire in:</p>
+                    <p className="text-4xl font-mono font-bold text-cyan-400 my-2">
+                        {minutes}:{seconds}
+                    </p>
+                </div>
+            ) : (
+                <div className="mt-4 text-center">
+                    <p className="text-red-400 mb-4 font-semibold flex items-center gap-2">
+                        <FiAlertTriangle /> Link expired.
+                    </p>
+                    <button
+                        onClick={handleResendClick}
+                        disabled={isResending}
+                        className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-cyan-600 text-white font-semibold rounded-lg hover:bg-cyan-700 transition-all duration-300 disabled:opacity-60"
+                    >
+                        {isResending ? <FiLoader className="animate-spin" /> : 'Resend Link'}
+                    </button>
+                </div>
+            )}
+             <p className="mt-8 text-sm text-white/50">You can close this tab. The login will complete automatically.</p>
+        </div>
     );
-  }
+};
 
-  return (
-    <div className="relative h-screen flex items-center justify-center px-4">
-      {/* Background */}
-      <video
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="absolute inset-0 w-full h-full object-cover z-0 brightness-[0.5] saturate-[1.2]"
-      >
-        <source
-          src="https://res.cloudinary.com/dnfqbyhxr/video/upload/v1752704263/shekvetili-georgia-2020-aerial-front-view-of-paragraph-resort-spa-hotel-exterior-at-night-free-video_1_mglffg.mp4"
-          type="video/mp4"
-        />
-      </video>
-      <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/10 to-black/70 z-10" />
 
-      {/* Form */}
-      <div className="relative z-20 w-full max-w-md bg-white/5 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl px-8 py-10 text-white">
-        <h2 className="text-3xl font-bold text-center mb-6">Login</h2>
+// --- Main Login Component ---
+const LoginPage: React.FC = () => {
+    const navigate = useNavigate();
+    const [email, setEmail] = useState("");
+    const [isWaiting, setIsWaiting] = useState(false);
+    const [status, setStatus] = useState<{ type: 'idle' | 'submitting' | 'error' | 'verifying', message: string }>({ type: 'idle', message: '' });
+    const [isPollingActive, setIsPollingActive] = useState(true); // FIX: New state to control polling
+    const sessionNonceRef = useRef<string | null>(null);
 
-        {errorMsg && (
-          <div className="text-red-400 text-sm mb-4 text-center">{errorMsg}</div>
-        )}
+    // Effect to handle token from URL (No changes needed here)
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get("token");
+        if (token) {
+            setStatus({ type: 'verifying', message: 'Verifying login link...' });
+            fetch(`${BACKEND_API_URL}/api/v1/user/verify-login?token=${token}`)
+                .then((res) => res.json())
+                .then((data) => {
+                    if (data.token) {
+                        localStorage.setItem("token", data.token);
+                        window.dispatchEvent(new Event('authChange'));
+                        navigate("/");
+                    } else {
+                        setStatus({ type: 'error', message: data.message || "Invalid or expired login link." });
+                        navigate('/login', { replace: true });
+                    }
+                })
+                .catch(() => {
+                    setStatus({ type: 'error', message: "Something went wrong during verification." });
+                    navigate('/login', { replace: true });
+                });
+        }
+    }, [navigate]);
+    
+    // FIX: Effect for polling now depends on isPollingActive
+    useEffect(() => {
+        if (!isWaiting || !isPollingActive) return;
 
-        <form onSubmit={handleLogin} className="space-y-5">
-          <div>
-            <label className="text-sm mb-1 block">Email Address</label>
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-              className="w-full px-4 py-3 rounded-lg border border-white/30 bg-white/10 text-white placeholder-white/70 focus:outline-none"
-            />
-          </div>
+        const poller = setInterval(async () => {
+            const nonce = sessionNonceRef.current;
+            if (!nonce) return;
+            try {
+                const res = await fetch(`${BACKEND_API_URL}/api/v1/user/verify-login?sessionNonce=${nonce}`);
+                const data = await res.json();
+                if (data.token) {
+                    localStorage.setItem("token", data.token);
+                    window.dispatchEvent(new Event('authChange'));
+                    clearInterval(poller);
+                    navigate("/");
+                }
+            } catch { /* Fail silently, poll will retry */ }
+        }, 5000);
 
-          <button
-            type="submit"
-            className="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-all duration-300 disabled:opacity-50"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Sending..." : "Send Login Link"}
-          </button>
-        </form>
-      </div>
-    </div>
-  );
+        return () => clearInterval(poller);
+    }, [isWaiting, isPollingActive, navigate]);
+
+
+    const handleApiLogin = useCallback(async (currentEmail: string) => {
+        const sessionNonce = crypto.randomUUID();
+        sessionNonceRef.current = sessionNonce;
+        localStorage.setItem("loginEmail", currentEmail);
+        
+        const res = await fetch(`${BACKEND_API_URL}/api/v1/user/login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: currentEmail, sessionNonce }),
+        });
+        
+        const data = await res.json();
+        if (!res.ok) {
+            throw new Error(data.message || "Login request failed");
+        }
+        return data;
+    }, []);
+
+    const handleInitialLogin = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (status.type === 'submitting') return;
+
+        setStatus({ type: 'submitting', message: 'Sending link...' });
+        setIsPollingActive(true); // Ensure polling is active for the first attempt
+        try {
+            await handleApiLogin(email);
+            setIsWaiting(true);
+        } catch (err: any) {
+            setStatus({ type: 'error', message: err.message });
+        }
+    };
+    
+    const handleResend = useCallback(async () => {
+        const savedEmail = localStorage.getItem("loginEmail");
+        if (!savedEmail) {
+            throw new Error("Could not find email to resend.");
+        }
+        await handleApiLogin(savedEmail);
+        setIsPollingActive(true); // FIX: Re-enable polling on resend
+        alert("A new login link has been sent to your email.");
+    }, [handleApiLogin]);
+
+    return (
+        <div className="relative min-h-screen flex items-center justify-center p-4 bg-gray-900">
+            <div className="absolute inset-0 w-full h-full z-0">
+                <div className="absolute inset-0 bg-black/60 z-10" />
+                <video autoPlay loop muted playsInline className="w-full h-full object-cover brightness-50">
+                    <source src="https://res.cloudinary.com/dnfqbyhxr/video/upload/v1752704263/shekvetili-georgia-2020-aerial-front-view-of-paragraph-resort-spa-hotel-exterior-at-night-free-video_1_mglffg.mp4" type="video/mp4" />
+                </video>
+            </div>
+
+            <div className="relative z-20 w-full max-w-md bg-black/20 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl p-8 text-white transition-all duration-500">
+                {isWaiting ? (
+                    <WaitingView 
+                        email={localStorage.getItem("loginEmail") || email} 
+                        onResend={handleResend}
+                        onTimeExpired={() => setIsPollingActive(false)} // FIX: Pass callback to stop polling
+                    />
+                ) : (
+                    <>
+                        <h2 className="text-4xl font-bold text-center mb-2">Welcome Back</h2>
+                        <p className="text-center text-white/60 mb-8">Enter your email to receive a login link.</p>
+
+                        {status.type === 'error' && (
+                            <div className="bg-red-500/10 text-red-400 text-sm p-3 rounded-lg mb-6 flex items-center gap-3">
+                                <FiAlertTriangle /> {status.message}
+                            </div>
+                        )}
+                        {status.type === 'verifying' && (
+                            <div className="bg-blue-500/10 text-blue-300 text-sm p-3 rounded-lg mb-6 flex items-center gap-3">
+                                <FiLoader className="animate-spin" /> {status.message}
+                            </div>
+                        )}
+
+                        <form onSubmit={handleInitialLogin} className="space-y-6">
+                            <div>
+                                <label htmlFor="email" className="text-sm font-medium text-white/70 mb-2 block">Email Address</label>
+                                <div className="relative">
+                                    <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-white/50" />
+                                    <input
+                                        id="email"
+                                        type="email"
+                                        required
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        placeholder="you@example.com"
+                                        className="w-full pl-12 pr-4 py-3 rounded-lg border border-white/20 bg-white/5 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-all"
+                                    />
+                                </div>
+                            </div>
+
+                            <button
+                                type="submit"
+                                className="w-full py-3 flex items-center justify-center gap-2 bg-cyan-600 text-white font-semibold rounded-lg hover:bg-cyan-700 transition-all duration-300 disabled:opacity-60 transform hover:scale-105"
+                                disabled={status.type === 'submitting'}
+                            >
+                                {status.type === 'submitting' ? <FiLoader className="animate-spin" /> : 'Send Login Link'}
+                                {status.type !== 'submitting' && <FiArrowRight/>}
+                            </button>
+                        </form>
+
+                        <div className="mt-8 text-center text-sm text-white/60">
+                            Don't have an account?{" "}
+                            <a onClick={() => navigate('/register')} className="text-cyan-400 hover:underline cursor-pointer">
+                                Sign Up
+                            </a>
+                        </div>
+                    </>
+                )}
+            </div>
+        </div>
+    );
 };
 
 export default LoginPage;

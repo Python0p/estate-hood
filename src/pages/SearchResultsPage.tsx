@@ -60,7 +60,7 @@ const SearchResultsPage: React.FC = () => {
               onClick={() => navigate(`/property/${property._id}`)}
             >
               {/* Image with hover effect */}
-              <div className="relative h-60 overflow-hidden">
+              <div className="relative h-90 overflow-hidden">
                 <img
                   src={property.images?.[0] || "/no-image.jpg"}
                   alt={property.title}
