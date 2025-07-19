@@ -1,26 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
-import { FiUser, FiLogOut, FiLogIn, FiUserPlus } from 'react-icons/fi';
+import { useNavigate, Link } from 'react-router-dom'; // Import Link for semantic navigation
+import { FiUser, FiLogOut, FiLogIn, FiUserPlus, FiMenu, FiX } from 'react-icons/fi'; // Added Menu and X icons
+
+// FIX 1: Moved navItems outside the component to prevent re-creation on every render.
+const navItems = [
+    { label: 'Services', href: '#services' },
+    { label: 'About', href: '#about' },
+    { label: 'Contact', href: '/contact' }
+];
 
 const Navbar: React.FC = () => {
     const navigate = useNavigate();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-    // This effect correctly checks for the token and listens for changes.
     useEffect(() => {
         const checkAuthStatus = () => {
             const token = localStorage.getItem('token');
             setIsLoggedIn(!!token);
         };
 
-        checkAuthStatus(); // Initial check
-
-        // Listen for custom event from login/logout actions to update UI instantly
+        checkAuthStatus();
         window.addEventListener('authChange', checkAuthStatus);
-        
-        // Listen to the standard storage event for cross-tab sync
         window.addEventListener('storage', checkAuthStatus);
 
         return () => {
@@ -31,25 +33,20 @@ const Navbar: React.FC = () => {
 
     const handleLogout = () => {
         localStorage.removeItem('token');
-        // Dispatch event so all parts of the app know about the logout
         window.dispatchEvent(new Event('authChange')); 
         navigate('/');
     };
-
-    // "Contact" is now a regular nav item for a cleaner button layout
-    const navItems = [
-        { label: 'Services', href: '#services' },
-        { label: 'About', href: '#about' },
-        { label: 'Contact', href: '/contact' }
-    ];
-
+    
+    // FIX 2: Improved navigation handler for smooth scrolling and client-side routing.
     const handleLinkClick = (href: string) => {
         setMobileMenuOpen(false);
-        // For internal links, use navigate. For anchor links, use standard href.
         if (href.startsWith('/')) {
-            navigate(href);
+            navigate(href); // Internal page navigation
+        } else if (href.startsWith('#')) {
+            // Smooth scroll to anchor link without page reload
+            document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
         } else {
-            window.location.href = href;
+            window.location.href = href; // For external links
         }
     };
 
@@ -63,35 +60,36 @@ const Navbar: React.FC = () => {
             <div className="max-w-7xl mx-auto px-6">
                 <div className="flex justify-between items-center py-3">
                     {/* Logo and Brand */}
-                    <div onClick={() => navigate('/')} className="flex items-center gap-3 cursor-pointer">
+                    <Link to="/" className="flex items-center gap-3 cursor-pointer">
                         <div className="relative">
                             <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-full h-4 w-0.5 bg-white/40 z-40" />
                             <motion.div initial={{ y: 0 }} whileHover={{ y: -2 }} transition={{ type: 'spring', stiffness: 300 }} className="relative z-50 -mb-8">
-                                <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-full overflow-hidden border-[5px] border-white shadow-2xl bg-white relative">
+                                <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-full overflow-hidden border-[3px] border-white shadow-2xl bg-white relative">
                                     <img src="https://res.cloudinary.com/dnfqbyhxr/image/upload/v1752705701/logo_ifw3ty.jpg" alt="Estate Hood Logo" className="h-full w-full object-cover" />
                                 </div>
                             </motion.div>
                         </div>
                         <span className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-gray-100 to-gray-300 bg-clip-text text-transparent tracking-tight drop-shadow">Estate Hood</span>
-                    </div>
+                    </Link>
 
                     {/* --- Desktop Navigation --- */}
                     <ul className="hidden md:flex items-center gap-2">
                         {navItems.map(({ label, href }) => (
                             <motion.li key={label} initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 + (navItems.findIndex(item => item.label === label) * 0.1), duration: 0.4, ease: 'easeOut' }}>
-                                <button onClick={() => handleLinkClick(href)} className="relative px-4 py-2 text-white/90 hover:text-white transition-colors duration-200 font-medium text-sm">
+                                {/* FIX 3: Using <a> tags for semantic correctness and accessibility */}
+                                <a onClick={() => handleLinkClick(href)} className="relative px-4 py-2 text-white/90 hover:text-white transition-colors duration-200 font-medium text-sm cursor-pointer">
                                     <span className="relative z-10">{label}</span>
                                     <motion.span className="absolute left-4 right-4 bottom-1 h-0.5 bg-blue-400 rounded-full" initial={{ scaleX: 0 }} whileHover={{ scaleX: 1 }} transition={{ duration: 0.3, ease: 'easeOut' }} style={{ originX: 0 }} />
-                                </button>
+                                </a>
                             </motion.li>
                         ))}
 
                         {isLoggedIn ? (
                              <>
                                 <motion.li initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: "spring", stiffness: 300, damping: 15, delay: 0.4 }} className="ml-4">
-                                    <button onClick={() => navigate('/dashboard')} className="flex items-center justify-center h-11 w-11 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors duration-300" aria-label="Dashboard">
+                                    <Link to="/dashboard" className="flex items-center justify-center h-11 w-11 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors duration-300" aria-label="Dashboard">
                                         <FiUser size={20} />
-                                    </button>
+                                    </Link>
                                 </motion.li>
                                 <motion.li initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: "spring", stiffness: 300, damping: 15, delay: 0.5 }} className="ml-2">
                                     <button onClick={handleLogout} className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-br from-red-500 to-red-700 text-white font-semibold shadow-lg hover:shadow-red-500/30 transition-all duration-300">
@@ -103,24 +101,34 @@ const Navbar: React.FC = () => {
                         ) : (
                             <>
                                 <motion.li initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: "spring", stiffness: 300, damping: 15, delay: 0.4 }} className="ml-4">
-                                     <button onClick={() => navigate('/login')} className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/20 text-white font-semibold transition-all duration-300">
+                                     <Link to="/login" className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/20 text-white font-semibold transition-all duration-300">
                                         <FiLogIn />
                                         <span>Login</span>
-                                    </button>
+                                    </Link>
                                 </motion.li>
                                 <motion.li initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: "spring", stiffness: 300, damping: 15, delay: 0.5 }} className="ml-2">
-                                    <button onClick={() => navigate('/register')} className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 text-white font-semibold shadow-lg hover:shadow-blue-500/30 transition-all duration-300">
+                                    <Link to="/register" className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 text-white font-semibold shadow-lg hover:shadow-blue-500/30 transition-all duration-300">
                                         <FiUserPlus />
                                         <span>Register</span>
-                                    </button>
+                                    </Link>
                                 </motion.li>
                             </>
                         )}
                     </ul>
 
-                    {/* --- Mobile Menu Button --- */}
+                    {/* --- FIX 4: Dynamic Mobile Menu Icon --- */}
                     <button className="md:hidden p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors focus:outline-none" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Toggle menu">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M3 12H21M3 6H21M3 18H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
+                        <AnimatePresence initial={false} mode="wait">
+                            <motion.div
+                                key={mobileMenuOpen ? 'close' : 'menu'}
+                                initial={{ rotate: mobileMenuOpen ? -90 : 90, opacity: 0 }}
+                                animate={{ rotate: 0, opacity: 1 }}
+                                exit={{ rotate: mobileMenuOpen ? 90 : -90, opacity: 0 }}
+                                transition={{ duration: 0.2 }}
+                            >
+                                {mobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
+                            </motion.div>
+                        </AnimatePresence>
                     </button>
                 </div>
 
@@ -131,7 +139,7 @@ const Navbar: React.FC = () => {
                             <div className="bg-slate-800/80 backdrop-blur-lg rounded-xl my-2 px-4 py-4 shadow-lg border border-white/10">
                                 <ul className="flex flex-col gap-3">
                                     {navItems.map(({ label, href }) => (
-                                        <li key={label}><button onClick={() => handleLinkClick(href)} className="w-full text-left block px-4 py-3 text-white hover:bg-white/10 rounded-lg transition-colors">{label}</button></li>
+                                        <li key={label}><a onClick={() => handleLinkClick(href)} className="w-full text-left block px-4 py-3 text-white hover:bg-white/10 rounded-lg transition-colors cursor-pointer">{label}</a></li>
                                     ))}
                                     
                                     <li className="border-t border-white/10 mt-2 pt-4">
