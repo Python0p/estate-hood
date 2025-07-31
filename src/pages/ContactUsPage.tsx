@@ -34,10 +34,10 @@ const ContactUsPage: React.FC = () => {
                 Noida, GBN, Uttar Pradesh 201305
               </li>
               <li>
-                ☎️ <strong>Phone:</strong> <a href="tel:+91XXXXXXXXXX" className="text-blue-400">+91-XXXXXXXXXX</a>
+                ☎️ <strong>Phone:</strong> <a href="tel:+919899240417" className="text-blue-400">+91-9899240417</a>
               </li>
               <li>
-                <FaWhatsapp className="inline mr-1 text-green-400" /> <strong>WhatsApp:</strong> <a href="https://wa.me/91XXXXXXXXXX" className="text-green-300">Chat Now</a>
+                <FaWhatsapp className="inline mr-1 text-green-400" /> <strong>WhatsApp:</strong> <a href="https://wa.me/919899240417" className="text-green-300">Chat Now</a>
               </li>
               <li>
                 <FaClock className="inline mr-1 text-yellow-300" /> <strong>Office Hours:</strong> Mon-Sat, 10am - 7pm
@@ -51,13 +51,19 @@ const ContactUsPage: React.FC = () => {
               alt="Client"
               className="w-28 h-28 rounded-full object-cover border-4 border-blue-500 shadow-lg mb-3"
             />
-            <h4 className="text-lg font-bold text-white mb-1">Ananya Sharma</h4>
+            <h4 className="text-lg font-bold text-white mb-1">Kamna Mahto</h4>
             <div className="text-white/80 text-center text-sm">
               <span>
-                <strong>Lead Property Consultant</strong>
+                <strong>About the Founder</strong>
               </span>
-              <p>
-                With 10+ years in real estate, Ananya is passionate about helping families and investors find their perfect space. She specializes in luxury apartments, commercial properties, and personalized client support.
+              <p className="text-justify">
+                Miss Kamna Mahto, founder of Estatehood, brings over a decade of real estate expertise rooted in deep market understanding and unwavering client trust. Over the years, she has cultivated long-standing relationships with hundreds of clients — both within India and across the globe — who continue to rely on her for strategic guidance and responsible property management.
+
+                Her approach goes beyond transactional advice. She assists clients in managing their properties remotely, offering end-to-end support that includes investment planning, tenant coordination, resale structuring, and market positioning. Her commitment is not just to deliver convenience — but to ensure that each decision aligns with long-term financial sensibility and real estate fundamentals.
+
+                Kamna’s core philosophy is simple yet rare: to lead with integrity in a space flooded with noise. She believes that not every trending project promises real growth — and stands firm on advising only those investments that are backed by potential, not by hype. Her sharp judgment, grounded in research and real-world performance, helps clients avoid emotional or market-driven traps and instead focus on assets that appreciate with time, purpose, and strategy.
+
+                At Estatehood, she continues to be the voice of clarity — offering calm, considered advice in a chaotic market, and ensuring that every step you take in real estate is built on insight, not impulse.
               </p>
             </div>
           </div>

@@ -30,7 +30,7 @@ const HeroSection: React.FC = () => {
           <div className="backdrop-blur-lg bg-white/5 border border-white/10 rounded-3xl p-8 sm:p-14 shadow-xl">
             <h1 className="text-white mb-6">
               <BlurText
-                text="Find Your Dream Home Today"
+                text="Discover High-Return Real Estate Deals"
                 delay={100}
                 animateBy="words"
                 direction="top"
@@ -61,7 +61,7 @@ const HeroSection: React.FC = () => {
               <button className="px-8 py-3 text-base font-semibold bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-full shadow-lg hover:shadow-blue-300/30 transition-all duration-300 hover:-translate-y-1">
                 Explore Properties
               </button>
-              <button className="px-8 py-3 text-base font-semibold border border-white text-white rounded-full hover:bg-white/10 transition-all duration-300 hover:-translate-y-1">
+              <button className="px-13 py-3 text-base font-semibold border border-white text-white rounded-full hover:bg-white/10 transition-all duration-300 hover:-translate-y-1">
                 Watch Video
               </button>
             </div>

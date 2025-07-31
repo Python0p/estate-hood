@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaHome, FaBuilding, FaGavel } from 'react-icons/fa';
+import { FaHome, FaBuilding, FaHandshake } from 'react-icons/fa'; // Changed FaGavel to FaHandshake
 import { motion, type Variants } from 'framer-motion';
 
 type Service = {
@@ -20,9 +20,10 @@ const services: Service[] = [
     icon: <FaBuilding className="text-violet-400 text-4xl mb-4 drop-shadow-lg" />,
   },
   {
-    title: 'Legal Assistance',
-    desc: 'Expert help with documentation and transactions.',
-    icon: <FaGavel className="text-amber-400 text-4xl mb-4 drop-shadow-lg" />,
+    title: 'Top Resale Picks',
+    desc: 'We have the top picks for resale properties.',
+    // Updated icon to FaHandshake
+    icon: <FaHandshake className="text-amber-400 text-4xl mb-4 drop-shadow-lg" />,
   },
 ];
 

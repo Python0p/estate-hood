@@ -42,7 +42,7 @@ const projects: Project[] = [
       'Strategic location'
     ],
     images: Array(5).fill('').map((_, i) => PreLaunch_images[i]),
-    tags: ['Residential', 'New Launch']
+    tags: ['Commercial', 'New Launch']
   },
   {
     id: '2',
@@ -156,8 +156,10 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
             ))}
           </ul>
           
-          <button className="mt-4 w-full py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors">
-            Contact Agent
+          <button className="mt-4 w-full py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
+            onClick={() => window.open("https://wa.me/919899240417?text=Hello%21%20I%27m%20interested%20in%20learning%20more%20about%20your%20services.", '_blank')}
+          >
+            Connect with Advisor
           </button>
         </div>
       </motion.div>
