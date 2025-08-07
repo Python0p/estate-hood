@@ -34,10 +34,10 @@ const ContactUsPage: React.FC = () => {
                 Noida, GBN, Uttar Pradesh 201305
               </li>
               <li>
-                ☎️ <strong>Phone:</strong> <a href="tel:+919899240417" className="text-blue-400">+91-9899240417</a>
+                ☎️ <strong>Phone:</strong> <a href="tel:+919871114903" className="text-blue-400">+91-9871114903</a>
               </li>
               <li>
-                <FaWhatsapp className="inline mr-1 text-green-400" /> <strong>WhatsApp:</strong> <a href="https://wa.me/919899240417" className="text-green-300">Chat Now</a>
+                <FaWhatsapp className="inline mr-1 text-green-400" /> <strong>WhatsApp:</strong> <a href="https://wa.me/919871114903" className="text-green-300">Chat Now</a>
               </li>
               <li>
                 <FaClock className="inline mr-1 text-yellow-300" /> <strong>Office Hours:</strong> Mon-Sat, 10am - 7pm
