@@ -72,7 +72,7 @@ const ContactUsPage: React.FC = () => {
             <a href="https://facebook.com/" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-blue-600 hover:bg-blue-700 transition">
               <FaFacebookF size={20} />
             </a>
-            <a href="https://instagram.com/" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-gradient-to-tr from-pink-500 to-yellow-400 hover:from-pink-600 hover:to-yellow-500 transition">
+            <a href="https://www.instagram.com/estatehood_/" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-gradient-to-tr from-pink-500 to-yellow-400 hover:from-pink-600 hover:to-yellow-500 transition">
               <FaInstagram size={20} />
             </a>
             <a href="https://youtube.com/" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-red-600 hover:bg-red-700 transition">
