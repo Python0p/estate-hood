@@ -17,6 +17,7 @@ const minBudgets = [
 const maxBudgets = [...minBudgets.slice(1)];
 
 const propertyTypes = {
+  All: ["Plot", "Independent House", "Apartment", "Villa", "Builder Floor", "Land", "Office Space", "Shop", "Showroom", "Warehouse"],
   Residential: ["Plot", "Independent House", "Apartment", "Villa", "Builder Floor"],
   Commercial: ["Land", "Office Space", "Shop", "Showroom", "Warehouse"]
 };
@@ -32,8 +33,8 @@ const SearchBox: React.FC = () => {
   const [showCityDropdown, setShowCityDropdown] = useState(false);
   const [minBudget, setMinBudget] = useState('');
   const [maxBudget, setMaxBudget] = useState('');
-  const [propertyCategory, setPropertyCategory] = useState<'Residential' | 'Commercial'>('Residential');
-  const [propertyType, setPropertyType] = useState(propertyTypes['Residential'][0]);
+  const [propertyCategory, setPropertyCategory] = useState<'All' | 'Residential' | 'Commercial'>('All');
+  const [propertyType, setPropertyType] = useState('');
   const [status, setStatus] = useState('');
   const [keyword, setKeyword] = useState('');
 
@@ -45,7 +46,7 @@ const SearchBox: React.FC = () => {
   );
 
   useEffect(() => {
-    setPropertyType(propertyTypes[propertyCategory][0]);
+    setPropertyType(''); // reset to None when category changes
   }, [propertyCategory]);
 
   const filteredMaxBudgets = useMemo(() => {
@@ -62,7 +63,8 @@ const SearchBox: React.FC = () => {
       if (selectedCity || cityInput) payload.city = selectedCity || cityInput;
       if (minBudget) payload.minBudget = minBudget;
       if (maxBudget) payload.maxBudget = maxBudget;
-      if (propertyCategory) payload.category = propertyCategory;
+      // Only include category if it's not "All"
+      if (propertyCategory && propertyCategory !== 'All') payload.category = propertyCategory;
       if (propertyType) payload.type = propertyType;
       if (status) payload.status = status;
       if (keyword) payload.keyword = keyword;
@@ -84,7 +86,6 @@ const SearchBox: React.FC = () => {
 
   return (
     <>
-      {/* Minimal Loading Spinner (no dark overlay) */}
       {isLoading && (
         <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
           <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div>
@@ -100,12 +101,11 @@ const SearchBox: React.FC = () => {
           backdropFilter: 'blur(12px)',
         }}
       >
-        {/* Rest of your form elements remain exactly the same */}
         {/* City Input */}
         <div className="relative min-w-[170px] flex-1">
           <input
             type="text"
-            placeholder="Select City"
+            placeholder="Select City (None)"
             value={selectedCity || cityInput}
             onFocus={() => setShowCityDropdown(true)}
             onChange={e => {
@@ -118,6 +118,16 @@ const SearchBox: React.FC = () => {
           />
           {showCityDropdown && (
             <ul className="absolute z-20 bg-[#172236cc] backdrop-blur border border-white/20 rounded-lg mt-1 max-h-48 overflow-auto w-full shadow-xl">
+              <li
+                className="px-4 py-2 hover:bg-white/10 cursor-pointer text-white"
+                onClick={() => {
+                  setSelectedCity('');
+                  setCityInput('');
+                  setShowCityDropdown(false);
+                }}
+              >
+                None
+              </li>
               {filteredCities.length === 0 ? (
                 <li className="px-4 py-2 text-white/70">No results</li>
               ) : (
@@ -151,7 +161,7 @@ const SearchBox: React.FC = () => {
             className="min-w-[120px] px-4 py-3 rounded-lg border border-white/30 bg-white/10 text-white backdrop-blur focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
             disabled={isLoading}
           >
-            <option value="">{label as string}</option>
+            <option value="">{label as string} (None)</option>
             {(list as string[]).map(b => (
               <option key={b} value={b} style={{ backgroundColor: '#172236cc', color: 'white' }}>
                 {b}
@@ -162,7 +172,7 @@ const SearchBox: React.FC = () => {
 
         {/* Category Toggle */}
         <div className="flex gap-2 bg-white/10 rounded-lg p-1 backdrop-blur">
-          {(['Residential', 'Commercial'] as const).map(cat => (
+          {(['All', 'Residential', 'Commercial'] as const).map(cat => (
             <button
               key={cat}
               type="button"
@@ -186,6 +196,7 @@ const SearchBox: React.FC = () => {
           className="min-w-[150px] px-4 py-3 rounded-lg border border-white/30 bg-white/10 text-white backdrop-blur focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
           disabled={isLoading}
         >
+          <option value="">Any Property Type</option>
           {propertyTypes[propertyCategory].map(type => (
             <option key={type} value={type} style={{ backgroundColor: '#172236cc', color: 'white' }}>
               {type}
