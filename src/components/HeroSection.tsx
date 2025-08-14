@@ -1,11 +1,44 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import SearchBox from './SearchBox';
 import BlurText from './react-bits-style/BlurText';
 import { Link } from 'react-router-dom';
 
+const BACKEND_API_URL = import.meta.env.VITE_API_URL;
+
 const HeroSection: React.FC = () => {
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleExploreProperties = async () => {
+    setIsLoading(true);
+
+    try {
+      // Make a null/empty call to fetch all properties
+      const res = await fetch(`${BACKEND_API_URL}/api/v1/search`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}) // Empty payload to get all properties
+      });
+
+      const data = await res.json();
+      navigate('/results', { state: { properties: data } });
+    } catch (err) {
+      console.error("Failed to fetch properties:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="relative">
+      {/* Loading Overlay */}
+      {isLoading && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div>
+        </div>
+      )}
+
       <section className="relative h-screen flex items-center justify-center px-4">
         {/* Background Video */}
         <video
@@ -58,8 +91,22 @@ const HeroSection: React.FC = () => {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row justify-center gap-4 mt-4">
-              <button className="px-8 py-3 text-base font-semibold bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-full shadow-lg hover:shadow-blue-300/30 transition-all duration-300 hover:-translate-y-1">
-                Explore Properties
+              <button 
+                className="px-8 py-3 text-base font-semibold bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-full shadow-lg hover:shadow-blue-300/30 transition-all duration-300 hover:-translate-y-1 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+                onClick={handleExploreProperties}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <span className="flex items-center gap-2">
+                    <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Loading...
+                  </span>
+                ) : (
+                  'Explore Properties'
+                )}
               </button>
               <button className="px-13 py-3 text-base font-semibold border border-white text-white rounded-full hover:bg-white/10 transition-all duration-300 hover:-translate-y-1">
                 Watch Video
