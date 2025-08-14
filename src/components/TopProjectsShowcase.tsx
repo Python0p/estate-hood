@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { motion} from 'framer-motion';
+import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import LocationIcon from '../components/react-bits-style/LocationIcon';
 import CheckIcon from '../components/react-bits-style/CheckIcon';
 
+const BACKEND_API_URL = import.meta.env.VITE_API_URL;
 
-const PreLaunch_images =  [
+const PreLaunch_images = [
   "https://res.cloudinary.com/dnfqbyhxr/image/upload/v1752704851/image0_otfvry.png",
   "https://res.cloudinary.com/dnfqbyhxr/image/upload/v1752704844/image1_eqoph2.png",
   "https://res.cloudinary.com/dnfqbyhxr/image/upload/v1752704844/image4_vjlfbv.png",
@@ -62,6 +64,8 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [activeImage, setActiveImage] = useState(0);
   const [autoRotate, setAutoRotate] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   // Auto-rotate images
   useEffect(() => {
@@ -80,6 +84,32 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
     setTimeout(() => setAutoRotate(true), 10000); // Resume auto-rotate after 10s
   };
 
+  const handleViewDetails = async () => {
+    setIsLoading(true);
+
+    try {
+      // Search for properties matching this project's title or location
+      const payload = {
+        keyword: project.title, // Search by project title
+      };
+
+      const res = await fetch(`${BACKEND_API_URL}/api/v1/search`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json();
+      navigate('/results', { state: { properties: data, projectTitle: project.title } });
+    } catch (err) {
+      console.error("Failed to fetch project details:", err);
+      // Fallback: navigate to results with project info
+      navigate('/results', { state: { properties: [project], projectTitle: project.title } });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <motion.div 
       className="relative rounded-xl overflow-hidden shadow-sm bg-white border border-gray-100"
@@ -87,6 +117,13 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
+      {/* Loading Overlay for this card */}
+      {isLoading && (
+        <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/20 backdrop-blur-sm">
+          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+        </div>
+      )}
+
       {/* Image with dull effect on hover */}
       <div className="aspect-[4/3] relative">
         <div className={`relative w-full h-full transition-all duration-300 ${isHovered ? 'brightness-75' : 'brightness-100'}`}>
@@ -104,8 +141,22 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
             animate={{ opacity: 1 }}
             className="absolute inset-0 flex items-center justify-center"
           >
-            <button className="px-4 py-2 bg-white text-gray-900 rounded-full font-medium shadow-md hover:bg-gray-100 transition-colors">
-              View Details
+            <button 
+              className="px-4 py-2 bg-white text-gray-900 rounded-full font-medium shadow-md hover:bg-gray-100 transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2"
+              onClick={handleViewDetails}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <svg className="animate-spin h-4 w-4 text-gray-900" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Loading...
+                </>
+              ) : (
+                'View Details'
+              )}
             </button>
           </motion.div>
         )}
@@ -172,8 +223,6 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
     </motion.div>
   );
 };
-
-// ... (LocationIcon and CheckIcon components remain the same)
 
 const TopProjectsShowcase: React.FC = () => {
   return (
