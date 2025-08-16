@@ -8,11 +8,8 @@ const allCities = [
 ];
 
 const minBudgets = [
-  "₹ 5 Lakhs", "₹ 10 Lakhs", "₹ 15 Lakhs", "₹ 20 Lakhs", "₹ 25 Lakhs",
-  "₹ 30 Lakhs", "₹ 40 Lakhs", "₹ 50 Lakhs", "₹ 60 Lakhs", "₹ 75 Lakhs",
-  "₹ 90 Lakhs", "₹ 1 Crore", "₹ 1.25 Crore", "₹ 1.5 Crore",
-  "₹ 1.75 Crore", "₹ 2 Crore", "₹ 3 Crore", "₹ 4 Crore", "₹ 5 Crore",
-  "₹ 10 Crore", "₹ 20 Crore", "₹ 30 Crore", "₹ 50 Crore", "₹ 75 Crore"
+  "₹ 5 Thousand", "₹ 10 Thousand", "₹ 30 Thousand","₹ 50 Thousand", "₹ 1 Lakhs", "₹ 5 Lakhs", "₹ 10 Lakhs", "₹ 15 Lakhs", "₹ 20 Lakhs", "₹ 25 Lakhs",
+  "₹ 30 Lakhs", "₹ 40 Lakhs"
 ];
 const maxBudgets = [...minBudgets.slice(1)];
 
