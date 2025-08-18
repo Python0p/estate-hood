@@ -11,7 +11,7 @@ const socialLinks = [
   },
   {
     name: 'Instagram',
-    href: 'https://www.instagram.com/estatehood_/',
+    href: 'https://www.instagram.com/estatehoods',
     icon: <FaInstagram size={18} className="text-white" />,
     bg: 'bg-gradient-to-tr from-pink-500 to-yellow-400 hover:from-pink-600 hover:to-yellow-500',
   },
