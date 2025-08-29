@@ -88,7 +88,6 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
     setIsLoading(true);
 
     try {
-      // Search for properties matching this project's title or location
       const payload = {
         keyword: project.title, // Search by project title
       };
@@ -103,7 +102,6 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
       navigate('/results', { state: { properties: data, projectTitle: project.title } });
     } catch (err) {
       console.error("Failed to fetch project details:", err);
-      // Fallback: navigate to results with project info
       navigate('/results', { state: { properties: [project], projectTitle: project.title } });
     } finally {
       setIsLoading(false);
@@ -225,8 +223,37 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
 };
 
 const TopProjectsShowcase: React.FC = () => {
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleBrowseAllProjects = async () => {
+    setIsLoading(true);
+
+    try {
+      const res = await fetch(`${BACKEND_API_URL}/api/v1/search`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({})
+      });
+
+      const data = await res.json();
+      navigate('/results', { state: { properties: data } });
+    } catch (err) {
+      console.error("Failed to fetch all properties:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
-    <section className="py-12 px-4 sm:px-6 bg-gray-50">
+    <section className="py-12 px-4 sm:px-6 bg-gray-50 relative">
+      {/* Fullscreen Loading Overlay */}
+      {isLoading && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div>
+        </div>
+      )}
+
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-8">
           <h2 className="text-2xl font-bold text-gray-900">Featured Projects</h2>
@@ -240,7 +267,11 @@ const TopProjectsShowcase: React.FC = () => {
         </div>
 
         <div className="mt-8 text-center">
-          <button className="text-sm font-medium text-gray-700 hover:text-gray-900 underline">
+          <button
+            onClick={handleBrowseAllProjects}
+            disabled={isLoading}
+            className="text-sm font-medium text-gray-700 hover:text-gray-900 underline disabled:opacity-60 disabled:cursor-not-allowed"
+          >
             Browse all projects →
           </button>
         </div>
