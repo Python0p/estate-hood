@@ -69,13 +69,13 @@ const ContactUsPage: React.FC = () => {
           </div>
           {/* Socials */}
           <div className="flex gap-4 justify-center mt-2">
-            <a href="https://facebook.com/" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-blue-600 hover:bg-blue-700 transition">
+            <a href="https://www.facebook.com/share/171ECfWgk5/" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-blue-600 hover:bg-blue-700 transition">
               <FaFacebookF size={20} />
             </a>
             <a href="https://www.instagram.com/estatehoods" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-gradient-to-tr from-pink-500 to-yellow-400 hover:from-pink-600 hover:to-yellow-500 transition">
               <FaInstagram size={20} />
             </a>
-            <a href="https://youtube.com/" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-red-600 hover:bg-red-700 transition">
+            <a href="https://youtube.com/@estatehood?si=qBN8ZRU_nQm5ZuCf" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-red-600 hover:bg-red-700 transition">
               <FaYoutube size={20} />
             </a>
             <a href="https://wa.me/91XXXXXXXXXX" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-green-500 hover:bg-green-600 transition">

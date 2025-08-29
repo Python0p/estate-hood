@@ -5,7 +5,7 @@ import { FaFacebookF, FaInstagram, FaYoutube, FaWhatsapp } from 'react-icons/fa'
 const socialLinks = [
   {
     name: 'Facebook',
-    href: 'https://facebook.com/',
+    href: 'https://www.facebook.com/share/171ECfWgk5/',
     icon: <FaFacebookF size={18} className="text-white" />,
     bg: 'bg-blue-600 hover:bg-blue-700',
   },
@@ -17,7 +17,7 @@ const socialLinks = [
   },
   {
     name: 'YouTube',
-    href: 'https://youtube.com/',
+    href: 'https://youtube.com/@estatehood?si=qBN8ZRU_nQm5ZuCf',
     icon: <FaYoutube size={18} className="text-white" />,
     bg: 'bg-red-600 hover:bg-red-700',
   },
